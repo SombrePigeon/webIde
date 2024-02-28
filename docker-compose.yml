@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  code-server:
+    build: 
+      context: codeServer
+      target: prod
+    environment:
+      - TZ=CET
+      #- FILE__PASSWORD=/secrets/codePassword 
+      - DEFAULT_WORKSPACE=/config/workspace #optional
+    volumes:
+      - devCode:/config
+    restart: unless-stopped
+    networks:
+      - nginxproxygitdeploy_net-proxy
+
+  web:
+    build: 
+      context: web
+      target: prod
+    volumes:
+      - devCode:/usr/local/apache2/htdocs/:ro
+    networks:
+      - nginxproxygitdeploy_net-proxy
+
+networks:
+    nginxproxygitdeploy_net-proxy:
+        external: true
+
+volumes:
+    devCode:
